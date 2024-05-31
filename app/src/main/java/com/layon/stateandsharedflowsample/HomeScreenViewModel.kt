@@ -44,7 +44,7 @@ class HomeScreenViewModel : ViewModel() {
 
     fun triggerFlow() : Flow<String> {
         return flow {
-            repeat(5) {
+            repeat(10) {
                 emit("Item $it")
                 delay(1000L)
             }

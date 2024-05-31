@@ -1,5 +1,6 @@
 package com.layon.stateandsharedflowsample
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,6 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,14 +38,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             StateAndSharedFlowSampleTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeScreen(viewModel)
-                }
+                HomeScreen(viewModel)
             }
         }
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun HomeScreen(viewModel: HomeScreenViewModel) {
     Column(
@@ -82,12 +84,14 @@ fun HomeScreen(viewModel: HomeScreenViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(20.dp)
         ) {
-            Text(text = "Hello World!")
+            var text = remember { mutableStateOf("Hello Word!") }
+            Text(text = text.value)
             Button(
                 onClick = {
                     coroutineScope.launch {
                         viewModel.triggerFlow().collect {
-
+                            Log.d("layonflog", "flow: $it")
+                            text.value = it
                         }
                     }
                 }) {
